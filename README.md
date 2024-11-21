@@ -21,6 +21,10 @@
 - O registro recém-criado será o último na ordem de apresentação. 
 - Verifica se o nome da tarefa já existe na base de dados antes de adicionar.
 
+### Reordenação de Tarefas 
+- Implementação de reordenação de tarefas usando dois métodos: - Drag-and-drop: o usuário pode arrastar uma tarefa para cima ou para baixo, soltando na posição desejada. 
+- Botões de subir e descer: cada linha possui botões para mover a tarefa para cima ou para baixo na ordem de
+
 ## Tecnologias Utilizadas 
 - Node.js
 - Express.js 
