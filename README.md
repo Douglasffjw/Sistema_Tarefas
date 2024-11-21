@@ -37,5 +37,6 @@ cd backend
 npm install
 npm start
 Navegue até o diretório frontend e abra o arquivo index.html em um navegador.
+```
 
 ![Resultado final do projeto](./TarefasSistema/img/preview.png)
