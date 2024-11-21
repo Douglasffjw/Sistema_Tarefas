@@ -1,21 +1,24 @@
 const API_URL = 'http://localhost:3001';
-let tarefas = [];  // Define a variável global
+let tarefas = []; // Define a variável global
 
 async function carregarTarefas() {
   const response = await fetch(`${API_URL}/tarefas`);
-  tarefas = await response.json();  // Atualiza a variável global
+  tarefas = await response.json(); // Atualiza a variável global
   const tabela = document.getElementById('tarefas-tabela');
   tabela.innerHTML = '';
   tarefas.forEach(tarefa => {
     const row = document.createElement('tr');
+    row.setAttribute('data-id', tarefa.id); // Armazena o ID da tarefa na linha
     if (tarefa.custo >= 1000) {
-      row.classList.add('highlight');  // Adiciona a classe 'highlight' se o custo for >= 1000
+      row.classList.add('highlight'); // Adiciona a classe 'highlight' se o custo for >= 1000
     }
     row.innerHTML = `
       <td>${tarefa.nome}</td>
       <td>R$${tarefa.custo}</td>
       <td>${tarefa.data_limite}</td>
       <td>
+        <button onclick="subirTarefa(${tarefa.id})">⬆️</button>
+        <button onclick="descerTarefa(${tarefa.id})">⬇️</button>
         <button onclick="editarTarefa(${tarefa.id})">✏️</button>
         <button onclick="excluirTarefa(${tarefa.id})">❌</button>
       </td>
@@ -109,6 +112,46 @@ async function salvarEdicao() {
   } else {
     alert('Erro ao editar tarefa!');
   }
+}
+
+function subirTarefa(id) {
+  const row = document.querySelector(`tr[data-id='${id}']`);
+  const prevRow = row.previousElementSibling;
+
+  if (prevRow) {
+    row.parentNode.insertBefore(row, prevRow); // Move visualmente
+    atualizarOrdemNoServidor();
+  }
+}
+
+function descerTarefa(id) {
+  const row = document.querySelector(`tr[data-id='${id}']`);
+  const nextRow = row.nextElementSibling;
+
+  if (nextRow) {
+    row.parentNode.insertBefore(nextRow, row); // Move visualmente
+    atualizarOrdemNoServidor();
+  }
+}
+
+function atualizarOrdemNoServidor() {
+  const table = document.getElementById('tarefas-tabela');
+  const novaOrdem = Array.from(table.rows).map((row, index) => {
+    const id = row.dataset.id;
+    return { id, ordem: index + 1 };
+  });
+
+  fetch(`${API_URL}/tarefas/reordenar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(novaOrdem),
+  }).then(response => {
+    if (response.ok) {
+      alert('Ordem atualizada com sucesso!');
+    } else {
+      alert('Erro ao atualizar a ordem!');
+    }
+  });
 }
 
 carregarTarefas();
